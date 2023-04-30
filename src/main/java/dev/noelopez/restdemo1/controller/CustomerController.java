@@ -1,20 +1,17 @@
 package dev.noelopez.restdemo1.controller;
 
-import dev.noelopez.restdemo1.exception.RestErrorResponse;
 import dev.noelopez.restdemo1.exception.CustomerNotFoundException;
 import dev.noelopez.restdemo1.util.CustomerUtils;
 import dev.noelopez.restdemo1.dto.CustomerRequest;
 import dev.noelopez.restdemo1.model.Customer;
 import dev.noelopez.restdemo1.repo.CustomerRepo;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +47,7 @@ public class CustomerController {
     }
 
     @PutMapping("{customerId}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable("customerId") Long id, @RequestBody CustomerRequest customerRequest)  {
+    public ResponseEntity<Customer> updateCustomer(@PathVariable("customerId") Long id, @Valid @RequestBody CustomerRequest customerRequest)  {
         Optional<Customer> customer = customerRepo.findById(id);
 
         if (customer.isEmpty())
@@ -73,11 +70,4 @@ public class CustomerController {
         customerRepo.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
-    //    @ExceptionHandler
-//    public ResponseEntity<RestErrorResponse> handleException(CustomerNotFoundException ex) {
-//        var response = new RestErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), LocalDateTime.now());
-//        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//    }
-
 }

@@ -20,4 +20,8 @@ public class DocumentUtils {
                 document.getType()
         );
     }
+
+    public static boolean fileSizeExceeded(int maxUploadSizeInMB, byte[] data) {
+        return maxUploadSizeInMB * 1024 * 1024 < data.length;
+    }
 }

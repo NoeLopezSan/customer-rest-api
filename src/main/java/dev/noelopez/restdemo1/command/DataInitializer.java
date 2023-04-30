@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Configuration
 public class DataInitializer implements CommandLineRunner {
@@ -20,5 +21,8 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         List<Customer> customers = customerRepo.findByNameLikeIgnoreCaseOrderByName("%joe%");
         customers.forEach(System.out::println);
+
+        //IntStream.rangeClosed(1,10).forEach();
+
     }
 }

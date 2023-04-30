@@ -1,15 +1,21 @@
 package dev.noelopez.restdemo1.controller;
 
+import dev.noelopez.restdemo1.exception.FileSizeExceededException;
 import dev.noelopez.restdemo1.model.Document;
 import dev.noelopez.restdemo1.repo.DocumentRepo;
+import dev.noelopez.restdemo1.util.DocumentUtils;
+import dev.noelopez.restdemo1.validation.AllowedExtensions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.LocalDate;
 
+import static dev.noelopez.restdemo1.util.DocumentUtils.*;
+@Validated
 @RestController
 @RequestMapping("api/v2/documents")
 public class DocumentControllerV2 {
@@ -23,10 +29,10 @@ public class DocumentControllerV2 {
     @PostMapping()
     ResponseEntity<Void> uploadDocument(@RequestBody byte[] data
             ,@RequestHeader("Content-Type") String type
-            ,@RequestHeader("fileName") String fileName) {
+            ,@RequestHeader("fileName") @AllowedExtensions String fileName) {
 
-        if (maxUploadSizeInMB*1024*1024 < data.length) {
-            return ResponseEntity.status(HttpStatusCode.valueOf(406)).build();
+        if (fileSizeExceeded(maxUploadSizeInMB, data)) {
+            throw  new FileSizeExceededException(data.length, maxUploadSizeInMB);
         }
 
         Document document = new Document();
