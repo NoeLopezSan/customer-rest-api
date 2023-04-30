@@ -8,3 +8,5 @@ Spring boot 3 rest api app. Simple REST app where it is possible to perform CRUD
 
 Application will create db schema on start up and populate Customer and Documents tables with a few records. Data is stored in an in-memory database. 
 CRUD operations can be performed and are protected with Basic Authentication.
+
+Application provides exception handling and Bean Validation.
