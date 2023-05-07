@@ -1,12 +1,15 @@
 package dev.noelopez.restdemo1.controller;
 
 import dev.noelopez.restdemo1.dto.DocumentResponse;
+import dev.noelopez.restdemo1.exception.EntityNotFoundException;
 import dev.noelopez.restdemo1.exception.FileSizeExceededException;
+import dev.noelopez.restdemo1.model.Customer;
 import dev.noelopez.restdemo1.model.Document;
 import dev.noelopez.restdemo1.repo.DocumentRepo;
 import dev.noelopez.restdemo1.util.DocumentUtils;
 import dev.noelopez.restdemo1.validation.AllowedExtensions;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -24,51 +27,40 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static dev.noelopez.restdemo1.util.DocumentUtils.fileSizeExceeded;
-@Validated
+//@Validated
 @RestController
 @RequestMapping("api/v1/documents")
 public class DocumentController {
+    @Value("${application.rest.v1.url}")
+    private String urlEndpointV1;
     private DocumentRepo documentRepo;
     public DocumentController(DocumentRepo documentRepo) {
         this.documentRepo = documentRepo;
     }
-
-    @Value("${application.rest.document.upload.max.size.mb}")
-    private int maxUploadSizeInMB;
     @GetMapping
     public List<DocumentResponse> findDocuments() {
         return documentRepo.findAll()
                 .stream()
-                .map(DocumentUtils::convertToCustomerResponse)
+                .map(DocumentUtils::convertToDocumentResponse)
                 .collect(Collectors.toList());
     }
 
     @GetMapping(value = "/{documentId}")
     ResponseEntity<Resource> downloadDocument(@PathVariable Long documentId) {
-//        byte[] data = documentRepo.findById(documentId);
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))
-//                .getContents();
-//      Move to service layer and manage exceptions
-
-        Optional<Document> document = documentRepo.findById(documentId);
-
-        if (document.isEmpty())
-            return ResponseEntity.notFound().build();
+        Document document = documentRepo.findById(documentId)
+                .orElseThrow(() -> new EntityNotFoundException(documentId, Document.class));
 
         return ResponseEntity
                 .ok()
-                .contentType(MediaType.parseMediaType(document.get().getType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.get().getName() + "\"")
-                .body(new ByteArrayResource(document.get().getContents()));
+                .contentType(MediaType.parseMediaType(document.getType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.getName() + "\"")
+                .body(new ByteArrayResource(document.getContents()));
     }
 
     @PostMapping()
-    ResponseEntity<Void> uploadDocument(@RequestBody String data ,@RequestHeader("Content-Type") String type,
+    ResponseEntity<Void> uploadDocument(@RequestBody @Size(min = 1, max = 1024*1024*1, message = "File Size is larger than 1MB!!") String data,
+                                        @RequestHeader("Content-Type") String type,
                                         @RequestHeader("fileName")  @AllowedExtensions String fileName) {
-
-        if (fileSizeExceeded(maxUploadSizeInMB, data.getBytes())) {
-            throw new FileSizeExceededException(data.getBytes().length, maxUploadSizeInMB);
-        }
 
         Document document = new Document();
         document.setName(fileName);
@@ -79,6 +71,6 @@ public class DocumentController {
 
         documentRepo.save(document);
 
-        return ResponseEntity.created(URI.create( "http://localhost:8080/api/v1/documents/"+document.getId() )).build();
+        return ResponseEntity.created(URI.create( urlEndpointV1+"documents/"+document.getId() )).build();
     }
 }

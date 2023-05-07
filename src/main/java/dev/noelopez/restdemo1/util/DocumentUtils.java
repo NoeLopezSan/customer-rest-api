@@ -12,7 +12,7 @@ public class DocumentUtils {
 //        return customer;
 //    }
 
-    public static DocumentResponse convertToCustomerResponse(Document document) {
+    public static DocumentResponse convertToDocumentResponse(Document document) {
         return  new DocumentResponse(
                 document.getName(),
                 document.getCreationDate(),
