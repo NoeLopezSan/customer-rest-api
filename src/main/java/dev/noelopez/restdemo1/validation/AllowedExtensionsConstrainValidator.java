@@ -10,11 +10,11 @@ public class AllowedExtensionsConstrainValidator implements ConstraintValidator<
 
     @Override
     public void initialize(AllowedExtensions allowedExtensions) {
-        this. extensions =allowedExtensions.value();
+        this. extensions = allowedExtensions.value();
     }
 
     @Override
     public boolean isValid(String fileName, ConstraintValidatorContext constraintValidatorContext) {
-        return Arrays.asList(extensions).contains(fileName.substring(fileName.lastIndexOf("/")).toLowerCase());
+        return Arrays.asList(extensions).contains(fileName.substring(fileName.lastIndexOf(".")+1).toLowerCase());
     }
 }

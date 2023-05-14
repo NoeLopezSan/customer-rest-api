@@ -16,7 +16,6 @@ import java.net.URI;
 import java.time.LocalDate;
 
 import static dev.noelopez.restdemo1.util.DocumentUtils.*;
-@Validated
 @RestController
 @RequestMapping("api/v2/documents")
 public class DocumentControllerV2 {
@@ -27,16 +26,16 @@ public class DocumentControllerV2 {
         this.documentRepo = documentRepo;
     }
     @PostMapping()
-    ResponseEntity<Void> uploadDocument(@RequestBody @Size(min = 1, max = 1024*1024*1, message = "File Size is larger than 1MB!!") byte[] data
-            ,@RequestHeader("Content-Type") String type
-            ,@RequestHeader("fileName") @AllowedExtensions String fileName) {
+    ResponseEntity<Void> uploadDocument(@RequestBody @Size(min = 1, max = 1024*1024*1, message = "File Size is larger than 1MB!!") String data,
+                                        @RequestHeader("Content-Type") String type,
+                                        @RequestHeader("fileName")  @AllowedExtensions String fileName) {
 
         Document document = new Document();
         document.setName(fileName);
         document.setCreationDate(LocalDate.now());
         document.setCustomerId(2L);
         document.setType(type);
-        document.setContents(data);
+        document.setContents(data.getBytes());
 
         documentRepo.save(document);
 

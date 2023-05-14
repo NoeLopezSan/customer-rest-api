@@ -3,6 +3,8 @@ package dev.noelopez.restdemo1.util;
 import dev.noelopez.restdemo1.dto.DocumentResponse;
 import dev.noelopez.restdemo1.model.Document;
 
+import java.time.LocalDate;
+
 public class DocumentUtils {
 //    public static Document convertToCustomer(CustomerRequest customerRequest) {
 //        Customer customer = new Customer();
@@ -12,6 +14,25 @@ public class DocumentUtils {
 //        return customer;
 //    }
 
+    public static Document createDocument(byte[] data, String type, String fileName) {
+        Document document = new Document();
+        document.setName(fileName);
+        document.setCreationDate(LocalDate.now());
+        document.setCustomerId(2L);
+        document.setType(type);
+        document.setContents(data);
+        return document;
+    }
+
+    public static Document createDocument(String data, String type, String fileName) {
+        Document document = new Document();
+        document.setName(fileName);
+        document.setCreationDate(LocalDate.now());
+        document.setCustomerId(2L);
+        document.setType(type);
+        document.setContents(data.getBytes());
+        return document;
+    }
     public static DocumentResponse convertToDocumentResponse(Document document) {
         return  new DocumentResponse(
                 document.getName(),
