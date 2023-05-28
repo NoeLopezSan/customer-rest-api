@@ -40,8 +40,7 @@ public class DocumentController {
     }
     @GetMapping
     public List<DocumentResponse> findDocuments(@RequestParam
-        @Size(min = 3, max = 10, message = "Name must be have at least 3 characters and no more than 100.")
-                                                    String name) {
+        @Size(min = 3, max = 100, message = "Name must be have at least {min} characters and no more than {max}.") String name) {
         return documentRepo.findAll()
                 .stream()
                 .map(DocumentUtils::convertToDocumentResponse)

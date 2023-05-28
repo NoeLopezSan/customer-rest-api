@@ -1,6 +1,7 @@
 package dev.noelopez.restdemo1.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -14,12 +15,14 @@ public class Customer {
     private String name;
     private String email;
     private LocalDate dateOfBirth;
+    private Integer status;
 
-    public Customer(Long id, String name, String email, LocalDate dateOfBirth) {
+    public Customer(@NotNull Long id, String name, String email, LocalDate dateOfBirth, Integer status) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
+        this.status = status;
     }
 
     public Customer() {
@@ -56,27 +59,35 @@ public class Customer {
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", status=" + status +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Customer user = (Customer) o;
-        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email) && Objects.equals(dateOfBirth, user.dateOfBirth);
+        Customer customer = (Customer) o;
+        return Objects.equals(id, customer.id) && Objects.equals(name, customer.name) && Objects.equals(email, customer.email) && Objects.equals(dateOfBirth, customer.dateOfBirth) && Objects.equals(status, customer.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, dateOfBirth);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
-                '}';
+        return Objects.hash(id, name, email, dateOfBirth, status);
     }
 }
