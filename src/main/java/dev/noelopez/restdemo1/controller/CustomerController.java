@@ -1,5 +1,6 @@
 package dev.noelopez.restdemo1.controller;
 
+import dev.noelopez.restdemo1.dto.CustomerResponse;
 import dev.noelopez.restdemo1.exception.EntityNotFoundException;
 import dev.noelopez.restdemo1.util.CustomerUtils;
 import dev.noelopez.restdemo1.dto.CustomerRequest;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/customers")
@@ -27,14 +30,28 @@ public class CustomerController {
         this.customerRepo = customerRepo;
     }
     @GetMapping
-    public List<Customer> findCustomers() {
-        return customerRepo.findAll(Sort.by(Sort.Direction.ASC,"name"));
+    public List<CustomerResponse> findCustomers(
+            @RequestParam(name="name", required=false) String name,
+            @RequestParam(name="status", required=false)  Customer.Status status,
+            @RequestParam(name="info", required=false) String info,
+            @RequestParam(name="vip", required=false) Boolean vip) {
+        return customerRepo
+                .findByAllFields(Customer.Builder
+                        .newCustomer()
+                        .name(name)
+                        .status(status)
+                        .withDetails(info, vip)
+                        .build())
+                .stream()
+                .map(CustomerUtils::convertToCustomerResponse)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("{customerId}")
-    public ResponseEntity<Customer> findCustomers(@PathVariable("customerId") Long id) {
+    public ResponseEntity<CustomerResponse> findCustomers(@PathVariable("customerId") Long id) {
         return customerRepo
                 .findById(id)
+                .map(CustomerUtils::convertToCustomerResponse)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new EntityNotFoundException(id, Customer.class));
     }
@@ -42,6 +59,7 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<Long> addCustomer(@Valid @RequestBody CustomerRequest customerRequest)  {
         Customer customer = CustomerUtils.convertToCustomer(customerRequest);
+        customer.setStatus(Customer.Status.ACTIVATED);
         customerRepo.save(customer);
 
         return ResponseEntity.created(URI.create(urlEndpointV1+"customers/"+customer.getId() )).build();
@@ -54,6 +72,7 @@ public class CustomerController {
 
         Customer updatedCustomer = CustomerUtils.convertToCustomer(customerRequest);
         updatedCustomer.setId(id);
+        updatedCustomer.setStatus(customer.getStatus());
         customerRepo.save(updatedCustomer);
 
         return ResponseEntity.ok(updatedCustomer);

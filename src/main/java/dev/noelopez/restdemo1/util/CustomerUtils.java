@@ -1,24 +1,33 @@
 package dev.noelopez.restdemo1.util;
 
+import dev.noelopez.restdemo1.dto.CustomerDetailsInfo;
+import dev.noelopez.restdemo1.dto.CustomerPersonInfo;
 import dev.noelopez.restdemo1.dto.CustomerRequest;
 import dev.noelopez.restdemo1.dto.CustomerResponse;
 import dev.noelopez.restdemo1.model.Customer;
 
+import java.time.format.DateTimeFormatter;
+
+import static dev.noelopez.restdemo1.model.Customer.Builder.newCustomer;
+
 public class CustomerUtils {
     public static Customer convertToCustomer(CustomerRequest customerRequest) {
-        Customer customer = new Customer();
-        customer.setName(customerRequest.name());
-        customer.setEmail(customerRequest.email());
-        customer.setDateOfBirth(customerRequest.dateOfBirth());
-        return customer;
+        return newCustomer()
+                .name(customerRequest.name())
+                .email(customerRequest.email())
+                .dob(customerRequest.dateOfBirth())
+                .build();
     }
 
     public static CustomerResponse convertToCustomerResponse(Customer customer) {
         return  new CustomerResponse(
                 customer.getId(),
-                customer.getName(),
-                customer.getEmail(),
-                customer.getDateOfBirth()
+                customer.getStatus(),
+                new CustomerPersonInfo(
+                        customer.getName(),
+                        customer.getEmail(),
+                        customer.getDateOfBirth().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
+                new CustomerDetailsInfo(customer.getDetails().getInfo(),customer.getDetails().isVip())
         );
     }
 }

@@ -8,12 +8,16 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CustomerRepo extends JpaRepository<Customer, Long> {
-    public List<Customer> findByNameLikeIgnoreCaseOrderByName(String username);
-    public List<Customer> findByEmail(String email);
+public interface CustomerRepo extends JpaRepository<Customer, Long> , CustomizedCustomerRepository {
 
-    public List<Customer> findByStatus(Integer status);
-
-    @Query("SELECT c FROM Customer c WHERE c.status = :status and c.name = :name")
-    public Customer findCustomerByStatusAndNameNamedParams(@Param("status") Integer status, @Param("name") String name);
+    public List<Customer> findTop5ByStatusOrderByDateOfBirthAsc(Customer.Status status);
+    @Query("""
+        SELECT c FROM Customer c 
+        JOIN FETCH c.details d
+        WHERE (c.status = :status or :status is null) 
+          and (c.name = :name or :name is null)
+        """)
+    public List<Customer> findCustomerByStatusAndName(
+            @Param("status") Customer.Status status,
+            @Param("name") String name);
 }
