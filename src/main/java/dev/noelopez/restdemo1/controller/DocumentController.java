@@ -2,8 +2,10 @@ package dev.noelopez.restdemo1.controller;
 
 import dev.noelopez.restdemo1.dto.DocumentResponse;
 import dev.noelopez.restdemo1.exception.EntityNotFoundException;
+import dev.noelopez.restdemo1.model.Customer;
 import dev.noelopez.restdemo1.model.Document;
 import dev.noelopez.restdemo1.repo.DocumentRepo;
+import dev.noelopez.restdemo1.service.DocumentService;
 import dev.noelopez.restdemo1.util.DocumentUtils;
 import dev.noelopez.restdemo1.validation.AllowedExtensions;
 import jakarta.validation.Valid;
@@ -34,14 +36,14 @@ public class DocumentController {
     Logger logger = LoggerFactory.getLogger(DocumentController.class);
     @Value("${application.rest.v1.url}")
     private String urlEndpointV1;
-    private DocumentRepo documentRepo;
-    public DocumentController(DocumentRepo documentRepo) {
-        this.documentRepo = documentRepo;
+    private DocumentService documentService;
+    public DocumentController(DocumentService documentService) {
+        this.documentService = documentService;
     }
     @GetMapping
     public List<DocumentResponse> findDocuments(@RequestParam
         @Size(min = 3, max = 100, message = "Name must be have at least {min} characters and no more than {max}.") String name) {
-        return documentRepo.findAll()
+        return documentService.findAll()
                 .stream()
                 .map(DocumentUtils::convertToDocumentResponse)
                 .collect(Collectors.toList());
@@ -52,7 +54,7 @@ public class DocumentController {
                                               @Positive(message = "Document id must be positive.")
             @Max(value = 99999999, message = "Document id cannot exceed value .")
                                                Long documentId) {
-        Document document = documentRepo.findById(documentId)
+        Document document = documentService.findById(documentId)
                 .orElseThrow(() -> new EntityNotFoundException(documentId, Document.class));
 
         return ResponseEntity
@@ -70,8 +72,17 @@ public class DocumentController {
                                         @AllowedExtensions String fileName) {
         logger.info("Document size is {}",data);
         Document document = createDocument(data, type, fileName);
-        documentRepo.save(document);
+        documentService.save(document);
 
         return ResponseEntity.created(URI.create( urlEndpointV1+"documents/"+document.getId() )).build();
+    }
+
+    @DeleteMapping("{documentId}")
+    public ResponseEntity<Object> deleteCustomer(@PathVariable("documentId") Long id)  {
+        Document document = documentService.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(id, Document.class));
+
+        documentService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

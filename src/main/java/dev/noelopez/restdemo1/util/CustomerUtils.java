@@ -16,6 +16,7 @@ public class CustomerUtils {
                 .name(customerRequest.name())
                 .email(customerRequest.email())
                 .dob(customerRequest.dateOfBirth())
+                .withDetails(customerRequest.info(),customerRequest.vip())
                 .build();
     }
 

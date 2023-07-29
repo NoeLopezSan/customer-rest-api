@@ -21,7 +21,7 @@ public class CustomizedCustomerRepositoryImpl implements CustomizedCustomerRepos
 
     private Predicate[] buildPredicates(Customer customer, CriteriaBuilder cb, Root<Customer> root) {
         List<Predicate> predicates = new ArrayList<>();
-        Join<Object, Object> details = (Join<Object, Object>) root.fetch("details");
+        var details = (Join<Object, Object>) root.fetch("details");
 
         if (Objects.nonNull(customer.getName()))
             predicates.add(cb.like(root.get("name"), "%"+customer.getName()+"%"));

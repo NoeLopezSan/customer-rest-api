@@ -2,37 +2,45 @@ package dev.noelopez.restdemo1.command;
 
 import dev.noelopez.restdemo1.model.Customer;
 import dev.noelopez.restdemo1.model.CustomerDetails;
+import dev.noelopez.restdemo1.model.Document;
 import dev.noelopez.restdemo1.repo.CustomerRepo;
+import dev.noelopez.restdemo1.repo.DocumentRepo;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;
 
 @Configuration
 public class DataInitializer implements CommandLineRunner {
-    private CustomerRepo customerRepo;
-    public DataInitializer(CustomerRepo customerRepo) {
-        this.customerRepo = customerRepo;
+
+    private static final byte[] fileContents;
+
+    static {
+        try {
+            fileContents = Files.readAllBytes(Paths.get("C:\\workspace\\files\\DownloadedFile.jpg"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+    private CustomerRepo customerRepo;
+    private DocumentRepo documentRepo;
+    public DataInitializer(CustomerRepo customerRepo, DocumentRepo documentRepo) {
+        this.customerRepo = customerRepo;
+        this.documentRepo = documentRepo;
+    }
+
     @Override
     public void run(String... args) {
-        IntStream.rangeClosed(1,9)
+        IntStream.rangeClosed(1,10)
                 .forEach(this::createRandomCustomer);
 
-        customerRepo.findById(1L);
-
-        customerRepo.findTop5ByStatusOrderByDateOfBirthAsc(Customer.Status.ACTIVATED);
-
-        Customer c = Customer.Builder
-                .newCustomer()
-                .name("John")
-                .status(Customer.Status.ACTIVATED)
-                .withDetails("info",false)
-                .build();
-        List<Customer> customers = customerRepo.findByAllFields(c);
-        System.out.println(customers);
+        IntStream.rangeClosed(1,10)
+                .forEach(this::createRandomDocument);
     }
     public void createRandomCustomer(int id) {
         Customer customer = Customer.Builder
@@ -48,8 +56,20 @@ public class DataInitializer implements CommandLineRunner {
         customerRepo.save(customer);
     }
 
+    public void createRandomDocument(int id) {
+        Document document = new Document();
+        document.setId((long)id);
+        document.setCustomerId((long)id);
+        document.setName("Document number "+id);
+        document.setCreationDate(LocalDate.now());
+        document.setType("txt");
+        document.setContents(fileContents);
+
+        documentRepo.save(document);
+    }
+
     private static LocalDate getRandomLocalDate(int id) {
-        return LocalDate.of(1980 + 2 * id, id % 12, (3 * id) % 28);
+        return LocalDate.of(1970 + id%40,(id % 11)+1,1 + (3 * id) % 28);
     }
 
     private static Customer.Status getRandomStatus(int id) {

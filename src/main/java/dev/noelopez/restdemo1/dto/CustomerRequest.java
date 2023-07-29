@@ -9,6 +9,7 @@ public record CustomerRequest(
         @Pattern(regexp = "[a-zA-Z\\s]+", message = "{customer.name.invalid}") String name,
         @NotBlank(message = "{customer.email.required}") @Email(message = "{customer.email.invalid}") String email,
         @Past(message = "{customer.dob.past}") LocalDate dateOfBirth,
-        @Max(value = 500, message = "{customer.info.max}")
-        String info) {
+        //@Max(value = 500, message = "{customer.info.max}")
+        String info,
+        boolean vip) {
 }
