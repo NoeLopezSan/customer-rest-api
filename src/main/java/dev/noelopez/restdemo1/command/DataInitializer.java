@@ -36,10 +36,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        IntStream.rangeClosed(1,10)
+        IntStream.rangeClosed(1,50)
                 .forEach(this::createRandomCustomer);
 
-        IntStream.rangeClosed(1,10)
+        IntStream.rangeClosed(1,50)
                 .forEach(this::createRandomDocument);
     }
     public void createRandomCustomer(int id) {

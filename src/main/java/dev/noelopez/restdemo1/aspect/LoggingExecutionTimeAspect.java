@@ -19,14 +19,18 @@ public class LoggingExecutionTimeAspect {
     @Pointcut("execution(public * dev.noelopez.restdemo1.repo.*.*(..))")
     public void publicMethodsInRepo() {}
 
-    @Around("publicMethodsInController() || publicMethodsInRepo()")
+    @Pointcut("execution(public * dev.noelopez.restdemo1.service.*.*(..))")
+    public void publicMethodsInService() {}
+
+    //@Around("publicMethodsInController() || publicMethodsInRepo()")
+    @Around("publicMethodsInController() || publicMethodsInService()")
     public Object logExecutionTime(ProceedingJoinPoint jointPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
 
         Object result = jointPoint.proceed();
 
         long elapseTime = System.currentTimeMillis() - startTime;
-        logger.info("Method [{}] executed in {} ms", jointPoint.getSignature(), elapseTime);
+        logger.info("Method [{}] with params {} executed in {} ms", jointPoint.getSignature(), jointPoint.getArgs(), elapseTime);
         return result;
     }
 }

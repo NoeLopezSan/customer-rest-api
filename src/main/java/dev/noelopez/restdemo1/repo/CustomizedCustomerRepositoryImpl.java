@@ -10,7 +10,7 @@ import java.util.*;
 public class CustomizedCustomerRepositoryImpl implements CustomizedCustomerRepository{
     @PersistenceContext
     private EntityManager entityManager;
-    public List<Customer> findByAllFields(Customer customer) {
+    public List<Customer> indByFields(Customer customer) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Customer> query = cb.createQuery(Customer.class);
         Root<Customer> root = query.from(Customer.class);

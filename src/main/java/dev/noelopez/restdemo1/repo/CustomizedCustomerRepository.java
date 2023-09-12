@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface CustomizedCustomerRepository {
 
-    public List<Customer> findByAllFields(Customer customer);
+    public List<Customer> indByFields(Customer customer);
 }

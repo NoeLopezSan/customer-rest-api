@@ -5,6 +5,7 @@ import dev.noelopez.restdemo1.dto.CustomerPersonInfo;
 import dev.noelopez.restdemo1.dto.CustomerRequest;
 import dev.noelopez.restdemo1.dto.CustomerResponse;
 import dev.noelopez.restdemo1.model.Customer;
+import dev.noelopez.restdemo1.model.CustomerDetails;
 
 import java.time.format.DateTimeFormatter;
 
@@ -20,6 +21,17 @@ public class CustomerUtils {
                 .build();
     }
 
+    public static Customer updateCustomer(Customer customer, CustomerRequest customerRequest) {
+        customer.setName(customerRequest.name());
+        customer.setEmail(customerRequest.email());
+        customer.setDateOfBirth(customerRequest.dateOfBirth());
+
+        CustomerDetails details = customer.getDetails();
+        details.setInfo(customerRequest.info());
+        details.setVip(customerRequest.vip());
+        customer.setDetails(details);
+        return customer;
+    }
     public static CustomerResponse convertToCustomerResponse(Customer customer) {
         return  new CustomerResponse(
                 customer.getId(),

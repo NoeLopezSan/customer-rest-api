@@ -2,6 +2,7 @@ package dev.noelopez.restdemo1.service;
 
 import dev.noelopez.restdemo1.model.Customer;
 import dev.noelopez.restdemo1.repo.CustomerRepo;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +22,11 @@ public class CustomerService {
         return customerRepo.findTop5ByStatusOrderByDateOfBirthAsc(status);
     }
 
-    public List<Customer> findByAllFields(Customer customer) {
-        return customerRepo.findByAllFields(customer);
+    @Cacheable(cacheNames="customers", key="#customer.name")
+    public List<Customer> findByFields(Customer customer) {
+        return customerRepo.indByFields(customer);
     }
+    @Cacheable(cacheNames="customers", key="#id")
     public Optional<Customer> findById(Long id) {
         return customerRepo.findById(id);
     }

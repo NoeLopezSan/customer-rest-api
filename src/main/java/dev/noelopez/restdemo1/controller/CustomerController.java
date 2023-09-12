@@ -6,18 +6,15 @@ import dev.noelopez.restdemo1.service.CustomerService;
 import dev.noelopez.restdemo1.util.CustomerUtils;
 import dev.noelopez.restdemo1.dto.CustomerRequest;
 import dev.noelopez.restdemo1.model.Customer;
-import dev.noelopez.restdemo1.repo.CustomerRepo;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,7 +34,7 @@ public class CustomerController {
             @RequestParam(name="info", required=false) String info,
             @RequestParam(name="vip", required=false) Boolean vip) {
         return customerService
-                .findByAllFields(Customer.Builder
+                .findByFields(Customer.Builder
                         .newCustomer()
                         .name(name)
                         .status(status)
@@ -67,16 +64,14 @@ public class CustomerController {
     }
 
     @PutMapping("{customerId}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable("customerId") Long id, @Valid @RequestBody CustomerRequest customerRequest)  {
+    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable("customerId") Long id, @Valid @RequestBody CustomerRequest customerRequest)  {
         Customer customer = customerService.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(id, Customer.class));
 
-        Customer updatedCustomer = CustomerUtils.convertToCustomer(customerRequest);
-        updatedCustomer.setId(id);
-        updatedCustomer.setStatus(customer.getStatus());
-        customerService.save(updatedCustomer);
+        CustomerUtils.updateCustomer(customer, customerRequest);
+        customerService.save(customer);
 
-        return ResponseEntity.ok(updatedCustomer);
+        return ResponseEntity.ok(CustomerUtils.convertToCustomerResponse(customer));
     }
 
     @DeleteMapping("{customerId}")
