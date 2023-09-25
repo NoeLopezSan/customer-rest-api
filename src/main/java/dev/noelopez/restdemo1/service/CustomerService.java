@@ -22,9 +22,9 @@ public class CustomerService {
         return customerRepo.findTop5ByStatusOrderByDateOfBirthAsc(status);
     }
 
-    @Cacheable(cacheNames="customers", key="#customer.name")
+    //@Cacheable(cacheNames="customers", key="#customer.name, #customer.status, #customer.details.info, #customer.details.vip")
     public List<Customer> findByFields(Customer customer) {
-        return customerRepo.indByFields(customer);
+        return customerRepo.findByFields(customer);
     }
     @Cacheable(cacheNames="customers", key="#id")
     public Optional<Customer> findById(Long id) {

@@ -10,7 +10,7 @@ import java.util.*;
 public class CustomizedCustomerRepositoryImpl implements CustomizedCustomerRepository{
     @PersistenceContext
     private EntityManager entityManager;
-    public List<Customer> indByFields(Customer customer) {
+    public List<Customer> findByFields(Customer customer) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Customer> query = cb.createQuery(Customer.class);
         Root<Customer> root = query.from(Customer.class);
@@ -28,7 +28,7 @@ public class CustomizedCustomerRepositoryImpl implements CustomizedCustomerRepos
         if (Objects.nonNull(customer.getStatus()))
             predicates.add(cb.equal(root.get("status"), customer.getStatus()));
         if (Objects.nonNull( customer.getDetails().getInfo()))
-            predicates.add(cb.equal(details.get("info"), customer.getDetails().getInfo()));
+            predicates.add(cb.like(details.get("info"), "%"+customer.getDetails().getInfo()+"%"));
         if (Objects.nonNull(customer.getDetails().isVip()))
             predicates.add(cb.equal(details.get("vip"), customer.getDetails().isVip()));
 

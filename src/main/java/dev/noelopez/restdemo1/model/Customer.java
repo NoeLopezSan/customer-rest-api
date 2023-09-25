@@ -33,7 +33,7 @@ public class Customer {
     private String name;
     private String email;
     private LocalDate dateOfBirth;
-    @OneToOne(mappedBy = "customer", optional = false ,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "customer", optional = false ,fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn()
     private CustomerDetails details;
     @Convert(converter = CustomerStatusConverter.class)
