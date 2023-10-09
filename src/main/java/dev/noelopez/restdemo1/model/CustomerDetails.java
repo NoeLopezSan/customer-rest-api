@@ -87,7 +87,6 @@ public class CustomerDetails {
                 ", vip=" + vip +
                 ", info='" + info + '\'' +
                 ", createdOn=" + createdOn +
-                ", customer=" + customer +
                 '}';
     }
 }

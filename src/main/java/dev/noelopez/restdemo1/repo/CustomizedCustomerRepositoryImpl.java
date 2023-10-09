@@ -28,7 +28,7 @@ public class CustomizedCustomerRepositoryImpl implements CustomizedCustomerRepos
         if (Objects.nonNull(customer.getStatus()))
             predicates.add(cb.equal(root.get("status"), customer.getStatus()));
         if (Objects.nonNull( customer.getDetails().getInfo()))
-            predicates.add(cb.like(details.get("info"), "%"+customer.getDetails().getInfo()+"%"));
+            predicates.add(cb.like(details.get("email"), "%"+customer.getEmail()+"%"));
         if (Objects.nonNull(customer.getDetails().isVip()))
             predicates.add(cb.equal(details.get("vip"), customer.getDetails().isVip()));
 
