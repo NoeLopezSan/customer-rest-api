@@ -37,35 +37,32 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         IntStream.rangeClosed(1,50)
-                .forEach(this::createRandomCustomer);
-
-        IntStream.rangeClosed(1,50)
-                .forEach(this::createRandomDocument);
+                .forEach(this::createRandomCustomerWithDocument);
     }
-    public void createRandomCustomer(int id) {
+    public void createRandomCustomerWithDocument(int id) {
         Customer customer = Customer.Builder
                 .newCustomer()
-                .id((long)id)
+                //.id((long)id)
                 .name("name "+id+" surname "+id)
                 .email("organisation"+id+"@email.com")
                 .dob(getRandomLocalDate(id))
                 .status(getRandomStatus(id))
                 .build();
         customer.setDetails(new CustomerDetails("Customer info details "+id, id%2 == 0));
-
+        customer.addDocument(createRandomDocument(id));
         customerRepo.save(customer);
     }
 
-    public void createRandomDocument(int id) {
+    public Document createRandomDocument(int id) {
         Document document = new Document();
-        document.setId((long)id);
-        document.setCustomerId((long)id);
+        //document.setId((long)id);
         document.setName("Document number "+id);
         document.setCreationDate(LocalDate.now());
         document.setType("txt");
-        document.setContents(fileContents);
+        document.setContents(String.format("Text document number %s",id).getBytes());
 
-        documentRepo.save(document);
+        //documentRepo.save(document);
+        return document;
     }
 
     private static LocalDate getRandomLocalDate(int id) {

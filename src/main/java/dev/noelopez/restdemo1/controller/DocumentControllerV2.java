@@ -33,7 +33,6 @@ public class DocumentControllerV2 {
         Document document = new Document();
         document.setName(fileName);
         document.setCreationDate(LocalDate.now());
-        document.setCustomerId(2L);
         document.setType(type);
         document.setContents(data.getBytes());
 

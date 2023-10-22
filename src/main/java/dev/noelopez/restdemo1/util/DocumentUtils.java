@@ -18,7 +18,6 @@ public class DocumentUtils {
         Document document = new Document();
         document.setName(fileName);
         document.setCreationDate(LocalDate.now());
-        document.setCustomerId(2L);
         document.setType(type);
         document.setContents(data);
         return document;
@@ -28,7 +27,6 @@ public class DocumentUtils {
         Document document = new Document();
         document.setName(fileName);
         document.setCreationDate(LocalDate.now());
-        document.setCustomerId(2L);
         document.setType(type);
         document.setContents(data.getBytes());
         return document;

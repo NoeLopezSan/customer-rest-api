@@ -46,7 +46,7 @@ public class CustomerController {
     }
 
     @GetMapping("{customerId}")
-    public ResponseEntity<CustomerResponse> findCustomers(@PathVariable("customerId") Long id) {
+    public ResponseEntity<CustomerResponse> findCustomer(@PathVariable("customerId") Long id) {
         return customerService
                 .findById(id)
                 .map(CustomerUtils::convertToCustomerResponse)

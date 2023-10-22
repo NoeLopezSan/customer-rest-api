@@ -13,7 +13,8 @@ public class Document {
     @SequenceGenerator(name = "document_id_sequence", sequenceName = "document_id_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "document_id_sequence")
     private Long id;
-    private Long customerId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Customer customer;
     private String name;
     @Lob
     private byte[] contents;
@@ -25,14 +26,6 @@ public class Document {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
     }
 
     public String getName() {
@@ -68,13 +61,19 @@ public class Document {
     public void setType(String type) {
         this.type = type;
     }
-    public Document() { }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
     @Override
     public String toString() {
         return "Document{" +
                 "id=" + id +
-                ", customerId=" + customerId +
                 ", name='" + name + '\'' +
                 ", contents=" + Arrays.toString(contents) +
                 ", type='" + type + '\'' +
@@ -87,13 +86,11 @@ public class Document {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Document document = (Document) o;
-        return Objects.equals(id, document.id) && Objects.equals(customerId, document.customerId) && Objects.equals(name, document.name) && Arrays.equals(contents, document.contents) && Objects.equals(type, document.type) && Objects.equals(creationDate, document.creationDate);
+        return Objects.equals(id, document.id);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(id, customerId, name, type, creationDate);
-        result = 31 * result + Arrays.hashCode(contents);
-        return result;
+        return getClass().hashCode();
     }
 }

@@ -3,10 +3,10 @@ package dev.noelopez.restdemo1.model;
 import dev.noelopez.restdemo1.converter.CustomerStatusConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.LazyToOne;
-import org.hibernate.annotations.LazyToOneOption;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -38,6 +38,9 @@ public class Customer {
     private CustomerDetails details;
     @Convert(converter = CustomerStatusConverter.class)
     private Status status;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Document> documents = new ArrayList<>();
     private Customer(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
@@ -177,6 +180,21 @@ public class Customer {
         return Objects.hash(id, name, email, dateOfBirth, details, status);
     }
 
+    public List<Document> getDocuments() {
+        return documents;
+    }
 
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
 
+    public void addDocument(Document document) {
+        documents.add(document);
+        document.setCustomer(this);
+    }
+
+    public void removeComment(Document document) {
+        documents.remove(document);
+        document.setCustomer(null);
+    }
 }
