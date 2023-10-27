@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
 import java.util.Locale;
@@ -24,6 +25,12 @@ public class GlobalExceptionHandler {
         this.messageSource = messageSource;
     }
 
+    @ExceptionHandler(NoHandlerFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    RestErrorResponse handleException(NoHandlerFoundException ex, Locale locale) {
+        return new RestErrorResponse(HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(), LocalDateTime.now());
+    }
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     RestErrorResponse handleException(ConstraintViolationException ex, Locale locale) {
