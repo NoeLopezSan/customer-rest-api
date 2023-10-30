@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  mysql8db:
+    container_name: mysql8db
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password01
+      MYSQL_DATABASE: customerdb
+    ports:
+      - "3306:3306"
+    networks:
+      springboot-mysql-net:
+
+  springboot-customer-app:
+    container_name: springboot-customer-app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql8db
+    networks:
+      springboot-mysql-net:
+    restart: on-failure
+
+networks:
+  springboot-mysql-net:

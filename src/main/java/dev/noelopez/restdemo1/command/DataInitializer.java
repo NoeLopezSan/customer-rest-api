@@ -18,7 +18,7 @@ import java.util.stream.IntStream;
 @Configuration
 public class DataInitializer implements CommandLineRunner {
 
-    private static final byte[] fileContents;
+    /*private static final byte[] fileContents;
 
     static {
         try {
@@ -26,7 +26,8 @@ public class DataInitializer implements CommandLineRunner {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
+    }*/
+
     private CustomerRepo customerRepo;
     private DocumentRepo documentRepo;
     public DataInitializer(CustomerRepo customerRepo, DocumentRepo documentRepo) {
