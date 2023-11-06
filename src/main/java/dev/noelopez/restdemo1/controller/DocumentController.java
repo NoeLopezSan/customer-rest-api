@@ -2,13 +2,10 @@ package dev.noelopez.restdemo1.controller;
 
 import dev.noelopez.restdemo1.dto.DocumentResponse;
 import dev.noelopez.restdemo1.exception.EntityNotFoundException;
-import dev.noelopez.restdemo1.model.Customer;
+import dev.noelopez.restdemo1.mapper.DocumentMapper;
 import dev.noelopez.restdemo1.model.Document;
-import dev.noelopez.restdemo1.repo.DocumentRepo;
 import dev.noelopez.restdemo1.service.DocumentService;
-import dev.noelopez.restdemo1.util.DocumentUtils;
 import dev.noelopez.restdemo1.validation.AllowedExtensions;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +19,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static dev.noelopez.restdemo1.util.DocumentUtils.*;
-import static dev.noelopez.restdemo1.util.DocumentUtils.fileSizeExceeded;
 @Validated
 @RestController
 @RequestMapping("api/v1/documents")
@@ -45,7 +38,7 @@ public class DocumentController {
         @Size(min = 3, max = 100, message = "Name must be have at least {min} characters and no more than {max}.") String name) {
         return documentService.findAll()
                 .stream()
-                .map(DocumentUtils::convertToDocumentResponse)
+                .map(DocumentMapper::convertToDocumentResponse)
                 .collect(Collectors.toList());
     }
 
@@ -71,7 +64,7 @@ public class DocumentController {
             ,@RequestHeader("fileName") @Pattern(regexp = "^([a-zA-Z0-9_-]{2,200})\\.([a-z]{3,4})$", message = "FileName is invalid.")
                                         @AllowedExtensions String fileName) {
         logger.info("Document size is {}",data);
-        Document document = createDocument(data, type, fileName);
+        Document document = Document.createDocument(data, type, fileName);
         documentService.save(document);
 
         return ResponseEntity.created(URI.create( urlEndpointV1+"documents/"+document.getId() )).build();

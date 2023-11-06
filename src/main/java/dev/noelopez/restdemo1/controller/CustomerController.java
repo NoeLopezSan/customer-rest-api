@@ -2,8 +2,8 @@ package dev.noelopez.restdemo1.controller;
 
 import dev.noelopez.restdemo1.dto.CustomerResponse;
 import dev.noelopez.restdemo1.exception.EntityNotFoundException;
+import dev.noelopez.restdemo1.mapper.CustomerMapper;
 import dev.noelopez.restdemo1.service.CustomerService;
-import dev.noelopez.restdemo1.util.CustomerUtils;
 import dev.noelopez.restdemo1.dto.CustomerRequest;
 import dev.noelopez.restdemo1.model.Customer;
 import jakarta.validation.Valid;
@@ -41,7 +41,7 @@ public class CustomerController {
                         .withDetails(info, vip)
                         .build())
                 .stream()
-                .map(CustomerUtils::convertToCustomerResponse)
+                .map(CustomerMapper::mapToCustomerResponse)
                 .collect(Collectors.toList());
     }
 
@@ -49,14 +49,14 @@ public class CustomerController {
     public ResponseEntity<CustomerResponse> findCustomer(@PathVariable("customerId") Long id) {
         return customerService
                 .findById(id)
-                .map(CustomerUtils::convertToCustomerResponse)
+                .map(CustomerMapper::mapToCustomerResponse)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new EntityNotFoundException(id, Customer.class));
     }
 
     @PostMapping
     public ResponseEntity<Long> addCustomer(@Valid @RequestBody CustomerRequest customerRequest)  {
-        Customer customer = CustomerUtils.convertToCustomer(customerRequest);
+        Customer customer = CustomerMapper.mapToCustomer(customerRequest);
         customer.setStatus(Customer.Status.ACTIVATED);
         customerService.save(customer);
 
@@ -68,10 +68,10 @@ public class CustomerController {
         Customer customer = customerService.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(id, Customer.class));
 
-        CustomerUtils.updateCustomer(customer, customerRequest);
+        CustomerMapper.updateCustomer(customer, customerRequest);
         customerService.save(customer);
 
-        return ResponseEntity.ok(CustomerUtils.convertToCustomerResponse(customer));
+        return ResponseEntity.ok(CustomerMapper.mapToCustomerResponse(customer));
     }
 
     @DeleteMapping("{customerId}")

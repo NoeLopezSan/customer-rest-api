@@ -1,4 +1,4 @@
-package dev.noelopez.restdemo1.aspect;
+package dev.noelopez.restdemo1.config.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

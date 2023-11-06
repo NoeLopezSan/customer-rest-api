@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -52,5 +53,9 @@ public class CustomerService {
     })
     public void deleteById(Long id) {
         customerRepo.deleteById(id);
+    }
+
+    public List<Customer> saveAll(List<Customer> customers) {
+        return customerRepo.saveAll(customers);
     }
 }

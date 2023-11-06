@@ -9,6 +9,14 @@ import java.util.Objects;
 @Entity
 @Table(name = "Document")
 public class Document {
+    public static Document createDocument(byte[] data, String type, String fileName) {
+        Document document = new Document();
+        document.setName(fileName);
+        document.setCreationDate(LocalDate.now());
+        document.setType(type);
+        document.setContents(data);
+        return document;
+    }
     @Id
     @SequenceGenerator(name = "document_id_sequence", sequenceName = "document_id_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "document_id_sequence")

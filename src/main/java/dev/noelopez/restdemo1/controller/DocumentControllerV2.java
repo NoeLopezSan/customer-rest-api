@@ -1,21 +1,16 @@
 package dev.noelopez.restdemo1.controller;
 
-import dev.noelopez.restdemo1.exception.FileSizeExceededException;
 import dev.noelopez.restdemo1.model.Document;
 import dev.noelopez.restdemo1.repo.DocumentRepo;
-import dev.noelopez.restdemo1.util.DocumentUtils;
 import dev.noelopez.restdemo1.validation.AllowedExtensions;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.time.LocalDate;
 
-import static dev.noelopez.restdemo1.util.DocumentUtils.*;
 @RestController
 @RequestMapping("api/v2/documents")
 public class DocumentControllerV2 {
