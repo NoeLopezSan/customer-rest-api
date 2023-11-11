@@ -82,6 +82,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     RestErrorResponse handleException(Exception ex, Locale locale) {
-        return new RestErrorResponse(HttpStatus.BAD_REQUEST.value(), messageSource.getMessage("exception.general",null, locale), LocalDateTime.now());
+        return new RestErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), LocalDateTime.now());
     }
 }

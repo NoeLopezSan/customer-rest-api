@@ -1,21 +1,23 @@
 package dev.noelopez.restdemo1.controller;
 
+import dev.noelopez.restdemo1.dto.CustomerRequest;
 import dev.noelopez.restdemo1.dto.CustomerResponse;
 import dev.noelopez.restdemo1.exception.EntityNotFoundException;
 import dev.noelopez.restdemo1.mapper.CustomerMapper;
-import dev.noelopez.restdemo1.service.CustomerService;
-import dev.noelopez.restdemo1.dto.CustomerRequest;
 import dev.noelopez.restdemo1.model.Customer;
+import dev.noelopez.restdemo1.service.CustomerService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("api/v1/customers")
@@ -27,7 +29,7 @@ public class CustomerController {
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
-    @GetMapping
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
     public List<CustomerResponse> findCustomers(
             @RequestParam(name="name", required=false) String name,
             @RequestParam(name="status", required=false)  Customer.Status status,
@@ -45,7 +47,7 @@ public class CustomerController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("{customerId}")
+    @GetMapping(path = "{customerId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<CustomerResponse> findCustomer(@PathVariable("customerId") Long id) {
         return customerService
                 .findById(id)
@@ -54,13 +56,18 @@ public class CustomerController {
                 .orElseThrow(() -> new EntityNotFoundException(id, Customer.class));
     }
 
-    @PostMapping
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> addCustomer(@Valid @RequestBody CustomerRequest customerRequest)  {
         Customer customer = CustomerMapper.mapToCustomer(customerRequest);
         customer.setStatus(Customer.Status.ACTIVATED);
         customerService.save(customer);
 
-        return ResponseEntity.created(URI.create(urlEndpointV1+"customers/"+customer.getId() )).build();
+        var location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("{/id}")
+                .buildAndExpand(customer.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("{customerId}")

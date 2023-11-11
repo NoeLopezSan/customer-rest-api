@@ -12,6 +12,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
+
 @Configuration
 @EnableWebSecurity
 public class HttpBasicSecurityConfig  {
@@ -19,30 +21,16 @@ public class HttpBasicSecurityConfig  {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
             .authorizeRequests(auth -> {
-                auth.requestMatchers(AntPathRequestMatcher.antMatcher("/")).permitAll();
-                auth.requestMatchers(AntPathRequestMatcher.antMatcher("/api/v1/customers/**")).hasRole("USER");
-                auth.requestMatchers(AntPathRequestMatcher.antMatcher("/api/v1/documents/**")).hasRole("ADMIN");
-                auth.anyRequest().authenticated();
+                auth.requestMatchers(antMatcher("/admin/**")).hasRole("ADMIN");
+                auth.requestMatchers(antMatcher("/api/v1/customers/**"),
+                                     antMatcher("/api/v1/documents/**")).hasRole("USER");
+                auth.anyRequest().denyAll();
             })
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .httpBasic(it -> {})
             .build();
     }
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        return http
-//                .authorizeHttpRequests()
-//                .requestMatchers("/").permitAll()
-//                .requestMatchers("/api/v1/customers/**").hasRole("USER")
-//                .requestMatchers("/api/v1/documents/**").hasRole("ADMIN")
-//                .anyRequest().authenticated()
-//                .and().csrf().disable()
-//                .sessionManagement().disable()
-//                .httpBasic(Customizer.withDefaults())
-//                .build();
-//    }
 
     @Bean
     public InMemoryUserDetailsManager userDetailsService() {
