@@ -63,7 +63,7 @@ public class CustomerController {
         customerService.save(customer);
 
         var location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("{/id}")
+                .path("/{id}")
                 .buildAndExpand(customer.getId())
                 .toUri();
 

@@ -12,7 +12,7 @@ public record CustomerRequest(
         @Email(message = "{customer.email.invalid}")
         String email,
         @Past(message = "{customer.dob.past}") LocalDate dateOfBirth,
-        @Max(value = 500, message = "{customer.info.max}")
+        @Size(max = 500, message = "{customer.info.max}")
         String info,
         boolean vip) {
 }
