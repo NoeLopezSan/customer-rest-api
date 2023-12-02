@@ -1,0 +1,48 @@
+= RESTful Customer API Specification
+;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Index]]
+= Index
+
+This is the index for the Customer Rest API endpoint.
+
+[[index-find-customer]]
+== Find a customer by id
+
+A `GET` request is used to find a customer by id
+
+operation::customer-get-by-id[snippets='http-request,path-parameters,http-response,response-fields']
+
+[[index-find-customers]]
+== Find customers
+
+A `GET` request is used to find customers
+
+operation::customer-search-customers[snippets='http-request,query-parameters,http-response,response-fields']
+
+[[index-add-customer]]
+== Add a customer
+
+A `POST` request to add a new customer
+
+operation::customer-add[snippets='http-request,request-fields,http-response,response-headers']
+
+[[index-update-customer]]
+== Update a customer
+
+A `PUT` request to update an existing customer
+
+operation::customer-update[snippets='http-request,path-parameters,request-fields,http-response,response-fields']
+
+[[index-delete-customer]]
+== Delete a customer by id
+
+A `DELETE` request is used to delete an existing customer by id
+
+operation::customer-delete[snippets='http-request,path-parameters,http-response']
